@@ -20,7 +20,8 @@ class ClicksController extends AbstractController
 
         if ($this->request->isPost()) {
             $click->remove($this->request->getPost());
-            $this->redirect(BASE_PATH . APP_URI . '/clicks?removed=' . time());
+            $this->sess->setRequestValue('removed', true, 1);
+            $this->redirect(BASE_PATH . APP_URI . '/clicks');
         } else {
             if ($click->hasPages($this->config->pagination, $this->request->getQuery('filter'))) {
                 $limit = $this->config->pagination;
