@@ -11,12 +11,13 @@ class Click extends AbstractModel
     /**
      * Get all fields
      *
+     * @param  string $type
      * @param  int    $limit
      * @param  int    $page
      * @param  string $sort
      * @return array
      */
-    public function getAll($limit = null, $page = null, $sort = null)
+    public function getAll($type = null, $limit = null, $page = null, $sort = null)
     {
         $order = $this->getSortOrder($sort, $page);
 
@@ -24,15 +25,94 @@ class Click extends AbstractModel
             $page = ((null !== $page) && ((int)$page > 1)) ?
                 ($page * $limit) - $limit : null;
 
-            return Table\Clicks::findAll([
-                'offset' => $page,
-                'limit'  => $limit,
-                'order'  => $order
-            ])->rows();
+            if (null !== $type) {
+                $rows = Table\Clicks::findBy(['type' => $type], [
+                    'offset' => $page,
+                    'limit'  => $limit,
+                    'order'  => $order
+                ])->rows();
+            } else {
+                $rows = Table\Clicks::findAll([
+                    'offset' => $page,
+                    'limit'  => $limit,
+                    'order'  => $order
+                ])->rows();
+            }
         } else {
-            return Table\Clicks::findAll([
-                'order'  => $order
-            ])->rows();
+            if (null !== $type) {
+                $rows = Table\Clicks::findBy(['type' => $type], [
+                    'order' => $order
+                ])->rows();
+            } else {
+                $rows = Table\Clicks::findAll([
+                    'order' => $order
+                ])->rows();
+            }
+        }
+
+        foreach ($rows as $i => $row) {
+            $rows[$i]->uniques = count(unserialize($row->ips));
+        }
+
+        return $rows;
+    }
+
+    /**
+     * Save content click
+     *
+     * @param  string $uri
+     * @param  string $type
+     * @return void
+     */
+    public function saveContent($uri, $type)
+    {
+        $ip    = $_SERVER['REMOTE_ADDR'];
+        $click = Table\Clicks::findBy(['uri' => $uri, 'type' => $type]);
+        if (isset($click->id)) {
+            $click->clicks++;
+            $ips = unserialize($click->ips);
+            if (!in_array($ip, $ips)) {
+                $ips[]      = $ip;
+                $click->ips = serialize($ips);
+            }
+            $click->save();
+        } else {
+            $click = new Table\Clicks([
+                'uri'    => $uri,
+                'type'   => $type,
+                'clicks' => 1,
+                'ips'    => serialize([$ip])
+            ]);
+            $click->save();
+        }
+    }
+
+    /**
+     * Save file click
+     *
+     * @param  string $file
+     * @return void
+     */
+    public function saveMedia($file)
+    {
+        $ip    = $_SERVER['REMOTE_ADDR'];
+        $click = Table\Clicks::findBy(['uri' => $file, 'type' => 'media']);
+        if (isset($click->id)) {
+            $click->clicks++;
+            $ips = unserialize($click->ips);
+            if (!in_array($ip, $ips)) {
+                $ips[]      = $ip;
+                $click->ips = serialize($ips);
+            }
+            $click->save();
+        } else {
+            $click = new Table\Clicks([
+                'uri'    => $file,
+                'type'   => 'media',
+                'clicks' => 1,
+                'ips'    => serialize([$ip])
+            ]);
+            $click->save();
         }
     }
 
@@ -60,22 +140,32 @@ class Click extends AbstractModel
     /**
      * Determine if list of clicks has pages
      *
-     * @param  int $limit
+     * @param  int    $limit
+     * @param  string $type
      * @return boolean
      */
-    public function hasPages($limit)
+    public function hasPages($limit, $type = null)
     {
-        return (Table\Clicks::findAll()->count() > $limit);
+        if (null !== $type) {
+            return (Table\Clicks::findBy(['type' => $type])->count() > $limit);
+        } else {
+            return (Table\Clicks::findAll()->count() > $limit);
+        }
     }
 
     /**
      * Get count of clicks
      *
+     * @param  string $type
      * @return int
      */
-    public function getCount()
+    public function getCount($type = null)
     {
-        return Table\Clicks::findAll()->count();
+        if (null !== $type) {
+            return Table\Clicks::findBy(['type' => $type])->count();
+        } else {
+            return Table\Clicks::findAll()->count();
+        }
     }
 
 }

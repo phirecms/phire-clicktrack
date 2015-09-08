@@ -6,7 +6,7 @@ use Phire\ClickTrack\Model;
 use Phire\Controller\AbstractController;
 use Pop\Paginator\Paginator;
 
-class SearchesController extends AbstractController
+class ClicksController extends AbstractController
 {
 
     /**
@@ -22,9 +22,9 @@ class SearchesController extends AbstractController
             $click->remove($this->request->getPost());
             $this->redirect(BASE_PATH . APP_URI . '/clicks?removed=' . time());
         } else {
-            if ($click->hasPages($this->config->pagination)) {
+            if ($click->hasPages($this->config->pagination, $this->request->getQuery('filter'))) {
                 $limit = $this->config->pagination;
-                $pages = new Paginator($click->getCount(), $limit);
+                $pages = new Paginator($click->getCount($this->request->getQuery('filter')), $limit);
                 $pages->useInput(true);
             } else {
                 $limit = null;
@@ -34,8 +34,9 @@ class SearchesController extends AbstractController
             $this->prepareView('index.phtml');
             $this->view->title  = 'ClickTrack';
             $this->view->pages  = $pages;
+            $this->view->filter = $this->request->getQuery('filter');
             $this->view->clicks = $click->getAll(
-                $limit, $this->request->getQuery('page'), $this->request->getQuery('sort')
+                $this->request->getQuery('filter'), $limit, $this->request->getQuery('page'), $this->request->getQuery('sort')
             );
 
             $this->send();

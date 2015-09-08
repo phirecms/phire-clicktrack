@@ -16,7 +16,8 @@ CREATE TABLE IF NOT EXISTS "[{prefix}]clicks" (
   "type" varchar(255) NOT NULL,
   "clicks" integer,
   "ips" text,
-  PRIMARY KEY ("id")
+  PRIMARY KEY ("id"),
+  UNIQUE ("uri")
 ) ;
 
 ALTER SEQUENCE click_id_seq OWNED BY "[{prefix}]clicks"."id";

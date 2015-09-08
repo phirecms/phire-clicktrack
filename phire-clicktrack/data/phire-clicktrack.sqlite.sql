@@ -23,7 +23,8 @@ CREATE TABLE IF NOT EXISTS "[{prefix}]clicks" (
   "type" varchar NOT NULL,
   "clicks" integer,
   "ips" text,
-  UNIQUE ("id")
+  UNIQUE ("id"),
+  UNIQUE ("uri")
 ) ;
 
 INSERT INTO "sqlite_sequence" ("name", "seq") VALUES ('[{prefix}]clicks', 21000);

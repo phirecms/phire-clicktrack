@@ -1,0 +1,11 @@
+/**
+ * ClickTrack Module Style Sheet for Phire CMS 2
+ */
+
+#clicktrack-nav {
+    font-size: 0.825em;
+}
+
+.clicktrack-pad {
+    padding: 0 6px 0 6px;
+}

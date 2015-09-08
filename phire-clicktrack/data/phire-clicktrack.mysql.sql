@@ -18,7 +18,8 @@ CREATE TABLE IF NOT EXISTS `[{prefix}]clicks` (
   `type` varchar(255) NOT NULL,
   `clicks` int(16),
   `ips` text,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE (`uri`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=21001;
 
 -- --------------------------------------------------------
