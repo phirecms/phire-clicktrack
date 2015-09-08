@@ -1,0 +1,34 @@
+<?php include $phireHeader; ?>
+    <h1 class="clicks-header"><?=$title; ?></h1>
+<?php if (count($clicks) > 0): ?>
+<?php if (null !== $pages): ?>
+    <div class="page-links"><?=$pages; ?></div>
+<?php endif; ?>
+    <form id="clicks-form" action="<?=$phireUri . '/clicks'; ?>" method="post">
+        <table class="data-table" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+                <th><a href="<?=$phireUri . '/clicks?sort=id';?>">#</a></th>
+                <th><a href="<?=$phireUri . '/clicks?sort=uri';?>">URI</a></th>
+                <th><a href="<?=$phireUri . '/clicks?sort=type';?>">Type</a></th>
+                <th><a href="<?=$phireUri . '/clicks?sort=clicks';?>">Clicks</a></th>
+                <th>Uniques</th>
+                <th class="text-center"><input type="checkbox" name="checkall" id="checkall" value="rm_clicks" /></th>
+            </tr>
+<?php $i = 1; ?>
+<?php foreach ($clicks as $click): ?>
+            <tr>
+                <td><?=$click->id; ?></td>
+                <td><?=$click->uri; ?></td>
+                <td><?=$click->type; ?></a></td>
+                <td><?=$click->clicks; ?></a></td>
+                <td><?=$click->uniques; ?></a></td>
+                <td class="text-center"><input type="checkbox" name="rm_clicks[]" id="rm_clicks<?=$i++; ?>" value="<?=$click->id; ?>" /></td>
+            </tr>
+<?php endforeach; ?>
+        </table>
+        <div id="form-footer"><input style="float: right;" type="submit" name="submit" class="process-btn" value="Remove" /><span style="float: right; margin: 5px 15px 0 0;">Clear All? <input type="checkbox" name="clear_all" value="1" /></span></div>
+    </form>
+<?php else: ?>
+    <p>There are currently no clicks in the click log.</p>
+<?php endif; ?>
+<?php include $phireFooter; ?>
