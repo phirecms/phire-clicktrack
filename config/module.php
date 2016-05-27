@@ -2,7 +2,7 @@
 /**
  * Module Name: phire-clicktrack
  * Author: Nick Sagona
- * Description: This is the click-track/stats module for Phire CMS 2, to be used in conjunction with the Content and Media modules
+ * Description: This is the click-track/stats module for Phire CMS 2
  * Version: 1.0
  */
 return [

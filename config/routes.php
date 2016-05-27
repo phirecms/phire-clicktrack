@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * phire-clicktrack routes
+ */
 return [
     '/download/:id' => [
         'controller' => 'Phire\ClickTrack\Controller\IndexController',
